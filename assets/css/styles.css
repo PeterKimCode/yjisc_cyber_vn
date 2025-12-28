@@ -2764,3 +2764,12 @@ body.theme-dark .picture-wrapper {
         margin: 0 auto;
     }
 }
+
+.goog-te-banner-frame,
+.goog-te-gadget {
+    display: none !important;
+}
+
+body {
+    top: 0 !important;
+}
