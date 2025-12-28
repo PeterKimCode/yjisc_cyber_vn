@@ -9,6 +9,10 @@ const initialize = () => {
     }
     initialize.hasRun = true;
 
+    if (document.documentElement) {
+        document.documentElement.lang = 'vi';
+    }
+
     const isStorageAvailable = (() => {
         try {
             const key = '__sdu-storage-check__';
@@ -231,7 +235,7 @@ const initialize = () => {
         scrollButton.type = 'button';
         scrollButton.className = 'scroll-to-top';
         scrollButton.setAttribute('data-scroll-top', '');
-        scrollButton.setAttribute('aria-label', '맨 위로');
+        scrollButton.setAttribute('aria-label', 'Lên đầu trang');
         scrollButton.innerHTML =
             '<svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">' +
             '<path d="M12 5.5a1 1 0 0 1 .7.3l6 6a1 1 0 0 1-1.4 1.4L12 7.91l-5.3 5.29a1 1 0 0 1-1.4-1.42l6-6a1 1 0 0 1 .7-.28Z" />' +
@@ -255,7 +259,7 @@ const initialize = () => {
         themeToggle.setAttribute('aria-pressed', 'false');
         themeToggle.innerHTML =
             '<span class="dark-mode-toggle__icon" aria-hidden="true">🌙</span>' +
-            '<span class="dark-mode-toggle__label">다크 모드</span>';
+            '<span class="dark-mode-toggle__label">Chế độ tối</span>';
         document.body.appendChild(themeToggle);
 
         return themeToggle;
@@ -943,6 +947,30 @@ const initialize = () => {
                 },
                 'google_translate_element'
             );
+
+            const applyVietnamese = () => {
+                const selector = document.querySelector('.goog-te-combo');
+                if (!(selector instanceof HTMLSelectElement)) {
+                    return false;
+                }
+                selector.value = 'vi';
+                selector.dispatchEvent(new Event('change'));
+                return true;
+            };
+
+            if (applyVietnamese()) {
+                return;
+            }
+
+            const retryInterval = window.setInterval(() => {
+                if (applyVietnamese()) {
+                    window.clearInterval(retryInterval);
+                }
+            }, 200);
+
+            window.setTimeout(() => {
+                window.clearInterval(retryInterval);
+            }, 5000);
         };
 
         if (window.google && window.google.translate && window.google.translate.TranslateElement) {
@@ -986,17 +1014,17 @@ const initialize = () => {
 
             const details = [];
             if (name) {
-                details.push(`이름: ${name}`);
+                details.push(`Tên: ${name}`);
             }
             if (phone) {
-                details.push(`연락처: ${phone}`);
+                details.push(`Liên hệ: ${phone}`);
             }
             if (date) {
-                details.push(`상담 희망일: ${date}`);
+                details.push(`Ngày mong muốn tư vấn: ${date}`);
             }
 
             const subjectSuffix = name ? ` - ${name}` : '';
-            const subject = encodeURIComponent(`상담 예약 신청${subjectSuffix}`);
+            const subject = encodeURIComponent(`Đăng ký đặt lịch tư vấn${subjectSuffix}`);
             const body = encodeURIComponent(details.join('\n'));
 
             const mailtoUrl = `mailto:gtcccybercollege@gmial.com?subject=${subject}&body=${body}`;
@@ -1017,7 +1045,7 @@ const initialize = () => {
             darkModeToggle.setAttribute('aria-pressed', String(isDark));
             darkModeToggle.innerHTML =
                 `<span class="dark-mode-toggle__icon" aria-hidden="true">${isDark ? '☀️' : '🌙'}</span>` +
-                `<span class="dark-mode-toggle__label">${isDark ? '라이트 모드' : '다크 모드'}</span>`;
+                `<span class="dark-mode-toggle__label">${isDark ? 'Chế độ sáng' : 'Chế độ tối'}</span>`;
         };
 
         applyTheme(initialTheme);
@@ -1074,16 +1102,18 @@ const initialize = () => {
 
             if (!emailInput.checkValidity()) {
                 emailInput.reportValidity();
-                updateFeedback('유효한 이메일 주소를 입력해주세요.');
+                updateFeedback('Vui lòng nhập địa chỉ email hợp lệ.');
                 return;
             }
 
             const emailValue = emailInput.value.trim();
-            const subject = encodeURIComponent('간편 구독 신청');
-            const body = encodeURIComponent(`신청자 이메일: ${emailValue}\n간편 구독 신청`);
+            const subject = encodeURIComponent('Đăng ký nhận tin nhanh');
+            const body = encodeURIComponent(`Email người đăng ký: ${emailValue}\nĐăng ký nhận tin nhanh`);
             const mailtoLink = `mailto:gtcccybercolleage@gmail.com?subject=${subject}&body=${body}`;
 
-            updateFeedback('메일 작성 창이 열립니다. 간편 구독 신청 내용을 확인해주세요.');
+            updateFeedback(
+                'Cửa sổ soạn email sẽ mở. Vui lòng kiểm tra nội dung đăng ký nhận tin nhanh.'
+            );
 
             window.location.href = mailtoLink;
         });
@@ -1094,7 +1124,6 @@ const initialize = () => {
     };
 
     setupNewsletterMailto();
-
     const scrollButton = ensureScrollButton();
     if (scrollButton) {
         const toggleVisibility = () => {
