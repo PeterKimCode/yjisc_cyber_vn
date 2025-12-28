@@ -73,6 +73,10 @@ const initialize = () => {
     }
     initialize.hasRun = true;
 
+    if (document.documentElement) {
+        document.documentElement.lang = 'vi';
+    }
+
     const isStorageAvailable = (() => {
         try {
             const key = '__sdu-storage-check__';
@@ -1007,6 +1011,30 @@ const initialize = () => {
                 },
                 'google_translate_element'
             );
+
+            const applyVietnamese = () => {
+                const selector = document.querySelector('.goog-te-combo');
+                if (!(selector instanceof HTMLSelectElement)) {
+                    return false;
+                }
+                selector.value = 'vi';
+                selector.dispatchEvent(new Event('change'));
+                return true;
+            };
+
+            if (applyVietnamese()) {
+                return;
+            }
+
+            const retryInterval = window.setInterval(() => {
+                if (applyVietnamese()) {
+                    window.clearInterval(retryInterval);
+                }
+            }, 200);
+
+            window.setTimeout(() => {
+                window.clearInterval(retryInterval);
+            }, 5000);
         };
 
         if (window.google && window.google.translate && window.google.translate.TranslateElement) {
