@@ -3,70 +3,6 @@ if (root && !root.classList.contains('js-enabled')) {
     root.classList.add('js-enabled');
 }
 
-const initializeVietnameseTranslation = () => {
-    if (initializeVietnameseTranslation.hasRun) {
-        return;
-    }
-    initializeVietnameseTranslation.hasRun = true;
-
-    if (document.documentElement) {
-        document.documentElement.lang = 'vi';
-    }
-
-    if (!document.body || document.getElementById('google_translate_element')) {
-        return;
-    }
-
-    const container = document.createElement('div');
-    container.id = 'google_translate_element';
-    container.hidden = true;
-    document.body.appendChild(container);
-
-    window.googleTranslateElementInit = () => {
-        if (!window.google || !window.google.translate) {
-            return;
-        }
-
-        new window.google.translate.TranslateElement(
-            {
-                pageLanguage: 'ko',
-                includedLanguages: 'vi',
-                autoDisplay: false,
-            },
-            'google_translate_element'
-        );
-
-        const applyVietnamese = () => {
-            const selector = document.querySelector('.goog-te-combo');
-            if (!(selector instanceof HTMLSelectElement)) {
-                return false;
-            }
-            selector.value = 'vi';
-            selector.dispatchEvent(new Event('change'));
-            return true;
-        };
-
-        if (applyVietnamese()) {
-            return;
-        }
-
-        const retryInterval = window.setInterval(() => {
-            if (applyVietnamese()) {
-                window.clearInterval(retryInterval);
-            }
-        }, 200);
-
-        window.setTimeout(() => {
-            window.clearInterval(retryInterval);
-        }, 5000);
-    };
-
-    const script = document.createElement('script');
-    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.head.appendChild(script);
-};
-
 const initialize = () => {
     if (initialize.hasRun) {
         return;
@@ -1188,7 +1124,6 @@ const initialize = () => {
     };
 
     setupNewsletterMailto();
-    initializeVietnameseTranslation();
 
     const scrollButton = ensureScrollButton();
     if (scrollButton) {
